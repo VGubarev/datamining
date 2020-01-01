@@ -17,7 +17,7 @@ import collections
 printable = set(list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "))
 
 if len(sys.argv) < 2 or not os.path.isdir(sys.argv[1]):
-    print ("./freq.py <directory>")
+    print ("./lemmatize.py <directory>")
     sys.exit()
 
 texts_tokens = []
@@ -25,7 +25,7 @@ tf_texts = []
 
 os.chdir(sys.argv[1])
 
-corpus = {}
+corpus = []
 
 for file in os.listdir('.'):
     if not os.path.isfile(file):
@@ -45,23 +45,8 @@ for file in os.listdir('.'):
     filtered_tokens = [w for w in filtered_tokens if len(w) > 2]
     filtered_tokens = [lemmatizer.lemmatize(w) for w in filtered_tokens]
 
-    corpus[file] = filtered_tokens
+    corpus.append(filtered_tokens)
 
-map = {}
-
-for file in corpus.keys():
-    for word in corpus[file]:
-        if file not in map.keys():
-            map[file] = {}
-
-        if word not in map[file].keys():
-            map[file][word] = 1
-        else:
-            map[file][word] = map[file][word] + 1
-
-for file in corpus.keys():
-    print ("==================")
-    print (file)
-    print ("==================")
-    print
-    print (sorted(map[file].items(), key=operator.itemgetter(1), reverse=True)[:30])
+for tokens in corpus:
+    for word in tokens:
+        print word

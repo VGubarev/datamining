@@ -17,11 +17,13 @@ import collections
 printable = set(list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "))
 
 if len(sys.argv) < 2 or not os.path.isdir(sys.argv[1]):
-    print ("./tokenizer.py <directory>")
+    print ("./tfidf.py <directory>")
     sys.exit()
 
 texts_tokens = []
 tf_texts = []
+
+len_corpus = 0
 
 os.chdir(sys.argv[1])
 
@@ -33,23 +35,23 @@ def compute_tfidf(corpus):
         return tf_text
 
     def compute_idf(word, corpus):
-        return math.log10(len(corpus)/sum([1.0 for i in corpus if word in i]))
+        return math.log10(len_corpus/sum([1.0 for i in corpus.keys() if word in corpus[i]]))
 
-    documents_list = []
+    documents_list = {}
 
-    for text in corpus:
+    for file in corpus.keys():
         tf_idf_dictionary = {}
-        computed_tf = compute_tf(text)
+        computed_tf = compute_tf(corpus[file])
 
         for word in computed_tf:
             tf_idf_dictionary[word] = computed_tf[word] * compute_idf(word, corpus)
 
-        documents_list.append(tf_idf_dictionary)
+        documents_list[file] = tf_idf_dictionary
 
     return documents_list
 
 
-corpus = []
+corpus = {}
 
 for file in os.listdir('.'):
     if not os.path.isfile(file):
@@ -69,10 +71,15 @@ for file in os.listdir('.'):
     filtered_tokens = [w for w in filtered_tokens if len(w) > 2]
     filtered_tokens = [lemmatizer.lemmatize(w) for w in filtered_tokens]
 
-    corpus.append(filtered_tokens)
+    corpus[file] = filtered_tokens
+    len_corpus = len_corpus + len(filtered_tokens)
 
 # print (corpus)
 tfidfs = compute_tfidf(corpus)
 
-for tfidf in tfidfs:
-    print (sorted(tfidf.items(), key=operator.itemgetter(1), reverse=True))
+for file in tfidfs.keys():
+    print ("==================")
+    print (file)
+    print ("==================")
+    print
+    print (sorted(tfidfs[file].items(), key=operator.itemgetter(1), reverse=True)[:30])

@@ -1,0 +1,7 @@
+\babel@toc {russian}{}
+\contentsline {section}{\numberline {1}Введение}{3}%
+\contentsline {section}{\numberline {2}Выбор предметной области}{3}%
+\contentsline {section}{\numberline {3}Лемматизация}{3}%
+\contentsline {section}{\numberline {4}Частотный анализ}{5}%
+\contentsline {section}{\numberline {5}TF-IDF анализ}{10}%
+\contentsline {section}{\numberline {6}HAL-матрица}{15}%
