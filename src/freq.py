@@ -64,4 +64,5 @@ for file in corpus.keys():
     print (file)
     print ("==================")
     print
-    print (sorted(map[file].items(), key=operator.itemgetter(1), reverse=True)[:30])
+    lst = [i[0] for i in sorted(map[file].items(), key=operator.itemgetter(1), reverse=True)[:30]];
+    print lst

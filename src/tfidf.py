@@ -82,4 +82,4 @@ for file in tfidfs.keys():
     print (file)
     print ("==================")
     print
-    print (sorted(tfidfs[file].items(), key=operator.itemgetter(1), reverse=True)[:30])
+    print sorted(tfidfs[file].items(), key=operator.itemgetter(1), reverse=True)[:30]
