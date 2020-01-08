@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv
 import collections
@@ -20,7 +20,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 lemmatizer = WordNetLemmatizer()
 
 
-printable = set(list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "))
+printable = set(list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ -\n"))
 
 hal = {}
 
@@ -28,6 +28,7 @@ hal = {}
 def get_lemmatized_tokens(text):
     tokens = word_tokenize(text)
     stop_words = set(stopwords.words('english'))
+    stop_words.add("zhang")
     filtered_tokens = [w for w in tokens if not w in stop_words]
     filtered_tokens = [w for w in filtered_tokens if len(w) > 2]
     filtered_tokens = [lemmatizer.lemmatize(w) for w in filtered_tokens]
@@ -65,12 +66,12 @@ def compute_scalar(sparse_matrix, indexes):
     result = {}
     for word, index in indexes.items():
         for word2, index2 in indexes.items():
-            if (word == word2) or ((word, word2) in result):
+            if (word == word2) or ((word2, word) in result):
                 continue
             scalar = sparse_matrix[index2, index]
-            result[(word2, word)] = scalar
+            result[(word, word2)] = scalar
     
-    return sorted(result, key=operator.itemgetter(1), reverse=True)
+    return sorted(result.items(), key=operator.itemgetter(1), reverse=True)
 
 vector_cache = {}
 
@@ -118,8 +119,8 @@ res_base_dir = sys.argv[3]
 with open(filename) as text:
     text = text.read()
 
-text = filter(lambda x: x in printable, text)
 text = text.lower()
+text = ''.join(filter(lambda x: x in printable, text))
 
 print("Lemmatize file")
 
@@ -155,13 +156,13 @@ with open(dir_name + "/" + os.path.basename(filename) + ".csv", "w") as smf:
     writer.writerows(rows)
 
 print("Compute scalar")
-result = compute_scalar(sparse_matrix, indexes)
+sresult = compute_scalar(sparse_matrix, indexes)
 with open(dir_name + "/" + os.path.basename(filename) + ".scalar", "w") as f:
-    f.write(str(result))
-print(result[:30])
+    f.write(str(sresult))
+print(sresult[:30])
 
 print("Compute similarity")
-result = compute_similarity(sparse_matrix, indexes)
+siresult = compute_similarity(sparse_matrix, indexes)
 with open(dir_name + "/" + os.path.basename(filename) + ".similarity", "w") as f:
-    f.write(str(result))
-print(result[:30])
+    f.write(str(siresult))
+print(siresult[:30])
